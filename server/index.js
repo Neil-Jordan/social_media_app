@@ -8,6 +8,13 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js";
+import postRoutes from "./routes/posts.js";
+import { createPost } from "./controllers/post.js"
+import { register } from "./controllers/auth.js";
+import { verifyToken } from "./middleware/auth.js";
+ 
 
 /* Configurations */
 
@@ -35,6 +42,21 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage });
+/* User Routes */
+/* Get Particular User */
+/* Get User via ID */
+/* Get User Friends */
+/* Add/Remove Friends */
+
+/* Routes with Files */
+/* uploads a single picture locally to the "public/assets" folder using middleware before hitting the register controller endpoint */
+app.post("/auth/register", upload.single("picture"), register);
+app.post("/posts", verifyToken, upload.single("picture"), createPost);
+
+/* Routes */
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 
 /* Mongoose Setup */
 
@@ -46,3 +68,4 @@ mongoose.connect(process.env.MONGO_URL, {
 }).then(() => {
     app.listen(PORT, () => console.log(`Server listening on ${PORT}`))
 }).catch((error) => console.error(`${error} did not connect`));
+
